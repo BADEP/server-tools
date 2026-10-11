@@ -2,16 +2,17 @@
 # @author Nicolas Seinlet
 # Copyright (c) ACSONE SA 2022
 # @author Stéphane Bidoul
+import contextlib
 import functools
 import json
 import logging
 import os
+import sys
 
 import psycopg2
 
 import odoo
-from odoo import http
-from odoo.tools._vendor import sessions
+from odoo.http import session as http_session
 
 _logger = logging.getLogger(__name__)
 
@@ -59,9 +60,9 @@ def with_cursor(func):
     return wrapper
 
 
-class PGSessionStore(sessions.SessionStore):
-    def __init__(self, uri, session_class=None):
-        super().__init__(session_class)
+class PGSessionStore(http_session.SessionStore):
+    def __init__(self, uri, session_cls=http_session.Session):
+        super().__init__(session_cls=session_cls)
         self._uri = uri
         self._cr = None
         self._open_connection()
@@ -86,10 +87,8 @@ class PGSessionStore(sessions.SessionStore):
     def _close_connection(self):
         """Return cursor to the pool."""
         if self._cr is not None:
-            try:
+            with contextlib.suppress(psycopg2.Error):
                 self._cr.close()
-            except Exception:  # pylint: disable=except-pass
-                pass
             self._cr = None
 
     @with_lock
@@ -117,7 +116,7 @@ class PGSessionStore(sessions.SessionStore):
                 DO UPDATE SET payload = %(payload)s,
                               write_date = now() at time zone 'UTC'
             """,
-            dict(sid=session.sid, payload=payload),
+            {"sid": session.sid, "payload": payload},
         )
 
     @with_lock
@@ -127,25 +126,27 @@ class PGSessionStore(sessions.SessionStore):
 
     @with_lock
     @with_cursor
-    def get(self, sid):
+    def get(self, sid, *, keep_sid=False):
         self._cr.execute("SELECT payload FROM http_sessions WHERE sid=%s", (sid,))
-        try:
-            data = json.loads(self._cr.fetchone()[0])
-        except Exception:
+        row = self._cr.fetchone()
+        if row is None:
+            if keep_sid:
+                return self.session_cls({}, sid, new=False)
             return self.new()
+        try:
+            data = json.loads(row[0])
+        except ValueError:
+            _logger.debug("Could not load session data. Use empty session.")
+            data = {}
+        return self.session_cls(data, sid, new=False)
 
-        return self.session_class(data, sid, False)
-
-    # Odoo's FileSystemSessionStore has a few additional methods that are independent
-    # of the actual storage backend. We reuse them here.
-    rotate = http.FilesystemSessionStore.rotate
-    generate_key = http.FilesystemSessionStore.generate_key
-    is_valid_key = http.FilesystemSessionStore.is_valid_key
-    delete_old_sessions = http.FilesystemSessionStore.delete_old_sessions
+    # rotate, generate_key, is_valid_session_id and delete_old_sessions are
+    # independent of the actual storage backend and inherited from Odoo's
+    # SessionStore.
 
     @with_lock
     @with_cursor
-    def vacuum(self, max_lifetime=http.SESSION_LIFETIME):
+    def vacuum(self, max_lifetime=http_session.SESSION_LIFETIME):
         self._cr.execute(
             "DELETE FROM http_sessions "
             "WHERE now() at time zone 'UTC' - write_date > %s",
@@ -186,7 +187,7 @@ class PGSessionStore(sessions.SessionStore):
     @with_cursor
     def delete_from_identifiers(self, identifiers: list[str]) -> None:
         for identifier in identifiers:
-            if not http._session_identifier_re.match(identifier):
+            if not http_session._session_identifier_re.match(identifier):
                 raise ValueError(
                     "Identifier format incorrect, "
                     "did you pass in a string instead of a list?"
@@ -196,21 +197,21 @@ class PGSessionStore(sessions.SessionStore):
             )
 
 
-_original_session_store = http.root.__class__.session_store
+_original_session_store = http_session.session_store
 
 
-@functools.cached_property
-def session_store(self):
+@functools.cache
+def session_store():
     session_db_uri = os.environ.get("SESSION_DB_URI")
     if session_db_uri:
         _logger.debug("HTTP sessions stored in: db")
-        return PGSessionStore(session_db_uri, session_class=http.Session)
-    return _original_session_store.__get__(self, self.__class__)
+        return PGSessionStore(session_db_uri, session_cls=http_session.Session)
+    return _original_session_store()
 
 
-# Monkey patch of standard methods
+# Monkey patch of standard function: odoo.http.session.session_store is imported
+# by name in several modules, replace it wherever it has already been imported.
 _logger.debug("Monkey patching session store")
-http.root.__class__.session_store = session_store
-http.root.__class__.session_store.__set_name__(http.root.__class__, "session_store")
-# Reset the lazy property cache
-vars(http.root).pop("session_store", None)
+for _module in list(sys.modules.values()):
+    if vars(_module).get("session_store") is _original_session_store:
+        _module.session_store = session_store

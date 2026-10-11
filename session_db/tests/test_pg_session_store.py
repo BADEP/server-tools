@@ -35,7 +35,7 @@ class TestPGSessionStore(TransactionCase):
         super().setUp()
         _, connection_info = connection_info_for(config["db_name"][0])
         self.session_store = PGSessionStore(
-            _make_postgres_uri(**connection_info), session_class=http.Session
+            _make_postgres_uri(**connection_info), session_cls=http.session.Session
         )
 
     def test_session_crud(self):
