@@ -19,5 +19,5 @@ Another easy way to invoke this upgrade mechanism is by issuing the
 following in an Odoo shell session:
 
 ``` python
-env['ir.module.module'].upgrade_changed_checksum()
+env["ir.module.module"].upgrade_changed_checksum()
 ```
