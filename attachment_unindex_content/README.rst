@@ -20,14 +20,14 @@ Attachment Unindex Content
 .. |badge2| image:: https://img.shields.io/badge/license-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
-.. |badge3| image:: https://img.shields.io/badge/github-OCA%2Fserver--tools-lightgray.png?logo=github
-    :target: https://github.com/OCA/server-tools/tree/19.0/attachment_unindex_content
-    :alt: OCA/server-tools
+.. |badge3| image:: https://img.shields.io/badge/github-OCA%2Fserver--tools__attachment_unindex_content-lightgray.png?logo=github
+    :target: https://github.com/OCA/server-tools__attachment_unindex_content/tree/20.0/attachment_unindex_content
+    :alt: OCA/server-tools__attachment_unindex_content
 .. |badge4| image:: https://img.shields.io/badge/weblate-Translate%20me-F47D42.png
-    :target: https://translation.odoo-community.org/projects/server-tools-19-0/server-tools-19-0-attachment_unindex_content
+    :target: https://translation.odoo-community.org/projects/server-tools__attachment_unindex_content-20-0/server-tools__attachment_unindex_content-20-0-attachment_unindex_content
     :alt: Translate me on Weblate
 .. |badge5| image:: https://img.shields.io/badge/runboat-Try%20me-875A7B.png
-    :target: https://runboat.odoo-community.org/builds?repo=OCA/server-tools&target_branch=19.0
+    :target: https://runboat.odoo-community.org/builds?repo=OCA/server-tools__attachment_unindex_content&target_branch=20.0
     :alt: Try me on Runboat
 
 |badge1| |badge2| |badge3| |badge4| |badge5|
@@ -39,13 +39,13 @@ the attachment is read and stored directly in the database. This field
 is useful in order to search content of a file. But most of cases it is
 not used, so, you can install this module in order to:
 
-- **Avoid Duplicating Data:** Because indexation extracts text content
-  from files and put it on the database in order it could be searched,
-  but this implies you have the file data in your ``filestore``
-  directory, and also part (or sometimes all) of that data in your
-  database too.
-- **Improve Performance:** Since not all indexed files are plain text,
-  they require extra process to read them.
+-  **Avoid Duplicating Data:** Because indexation extracts text content
+   from files and put it on the database in order it could be searched,
+   but this implies you have the file data in your ``filestore``
+   directory, and also part (or sometimes all) of that data in your
+   database too.
+-  **Improve Performance:** Since not all indexed files are plain text,
+   they require extra process to read them.
 
 Maybe you could try to uninstall modules like ``document`` in order to
 disable its indexation features, but you could face the uninstallation
@@ -76,10 +76,10 @@ already recorded in database will be cleared.
 Bug Tracker
 ===========
 
-Bugs are tracked on `GitHub Issues <https://github.com/OCA/server-tools/issues>`_.
+Bugs are tracked on `GitHub Issues <https://github.com/OCA/server-tools__attachment_unindex_content/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/OCA/server-tools/issues/new?body=module:%20attachment_unindex_content%0Aversion:%2019.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/OCA/server-tools__attachment_unindex_content/issues/new?body=module:%20attachment_unindex_content%0Aversion:%2020.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -94,9 +94,9 @@ Authors
 Contributors
 ------------
 
-- Moises López <moylop260@vauxoo.com>
-- Erick Birbe <erick@vauxoo.com>
-- Khoi (Kien Kim) <khoikk@trobz.com>
+-  Moises López <moylop260@vauxoo.com>
+-  Erick Birbe <erick@vauxoo.com>
+-  Khoi (Kien Kim) <khoikk@trobz.com>
 
 Other credits
 -------------
@@ -130,6 +130,6 @@ Current `maintainers <https://odoo-community.org/page/maintainer-role>`__:
 
 |maintainer-moylop260| |maintainer-ebirbe| |maintainer-luisg123v| 
 
-This module is part of the `OCA/server-tools <https://github.com/OCA/server-tools/tree/19.0/attachment_unindex_content>`_ project on GitHub.
+This module is part of the `OCA/server-tools__attachment_unindex_content <https://github.com/OCA/server-tools__attachment_unindex_content/tree/20.0/attachment_unindex_content>`_ project on GitHub.
 
 You are welcome to contribute. To learn how please visit https://odoo-community.org/page/Contribute.
