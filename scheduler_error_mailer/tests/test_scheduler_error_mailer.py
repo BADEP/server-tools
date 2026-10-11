@@ -8,6 +8,8 @@ from odoo.addons.scheduler_error_mailer.hooks import post_init_hook
 
 
 class TestSchedulerErrorMailer(BaseCommon):
+    _test_user_groups = None
+
     def setUp(self):
         super().setUp()
         self.cron = self.env["ir.cron"].create(
