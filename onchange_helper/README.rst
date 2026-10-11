@@ -20,14 +20,14 @@ Onchange Helper
 .. |badge2| image:: https://img.shields.io/badge/license-LGPL--3-blue.png
     :target: http://www.gnu.org/licenses/lgpl-3.0-standalone.html
     :alt: License: LGPL-3
-.. |badge3| image:: https://img.shields.io/badge/github-OCA%2Fserver--tools-lightgray.png?logo=github
-    :target: https://github.com/OCA/server-tools/tree/19.0/onchange_helper
-    :alt: OCA/server-tools
+.. |badge3| image:: https://img.shields.io/badge/github-OCA%2Fserver--tools__onchange_helper-lightgray.png?logo=github
+    :target: https://github.com/OCA/server-tools__onchange_helper/tree/20.0/onchange_helper
+    :alt: OCA/server-tools__onchange_helper
 .. |badge4| image:: https://img.shields.io/badge/weblate-Translate%20me-F47D42.png
-    :target: https://translation.odoo-community.org/projects/server-tools-19-0/server-tools-19-0-onchange_helper
+    :target: https://translation.odoo-community.org/projects/server-tools__onchange_helper-20-0/server-tools__onchange_helper-20-0-onchange_helper
     :alt: Translate me on Weblate
 .. |badge5| image:: https://img.shields.io/badge/runboat-Try%20me-875A7B.png
-    :target: https://runboat.odoo-community.org/builds?repo=OCA/server-tools&target_branch=19.0
+    :target: https://runboat.odoo-community.org/builds?repo=OCA/server-tools__onchange_helper&target_branch=20.0
     :alt: Try me on Runboat
 
 |badge1| |badge2| |badge3| |badge4| |badge5|
@@ -45,8 +45,8 @@ Usage
 
 To use this module, you need to:
 
-- depend on this module
-- call yourmodel.play_onchanges(values, ['field'])
+-  depend on this module
+-  call yourmodel.play_onchanges(values, ['field'])
 
 Example if you want to create a sale order and you want to get the
 values relative to partner_id field (as if you fill the field from UI)
@@ -89,10 +89,10 @@ command when values are assigned to the record by the onchange
 
 Notes:
 
-- Order in onchange_fields is very important as onchanges methods will
-  be played in that order.
-- If you use memory object in vals, be award that onchange method in
-  base model call self.invalidate_cache() that reset it.
+-  Order in onchange_fields is very important as onchanges methods will
+   be played in that order.
+-  If you use memory object in vals, be award that onchange method in
+   base model call self.invalidate_cache() that reset it.
 
 Known issues / Roadmap
 ======================
@@ -105,10 +105,10 @@ module.
 Bug Tracker
 ===========
 
-Bugs are tracked on `GitHub Issues <https://github.com/OCA/server-tools/issues>`_.
+Bugs are tracked on `GitHub Issues <https://github.com/OCA/server-tools__onchange_helper/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/OCA/server-tools/issues/new?body=module:%20onchange_helper%0Aversion:%2019.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/OCA/server-tools__onchange_helper/issues/new?body=module:%20onchange_helper%0Aversion:%2020.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -124,12 +124,12 @@ Authors
 Contributors
 ------------
 
-- Guewen Baconnier <guewen.baconnier@camptocamp.com>
-- Florian da Costa <florian.dacosta@akretion.com>
-- Andrea Stirpe <a.stirpe@onestein.nl>
-- Souheil Bejaoui <souheil.bejaoui@acsone.eu>
-- Kevin Khao <kevin.khao@akretion.com>
-- Thien Vo <thienvh@trobz.com>
+-  Guewen Baconnier <guewen.baconnier@camptocamp.com>
+-  Florian da Costa <florian.dacosta@akretion.com>
+-  Andrea Stirpe <a.stirpe@onestein.nl>
+-  Souheil Bejaoui <souheil.bejaoui@acsone.eu>
+-  Kevin Khao <kevin.khao@akretion.com>
+-  Thien Vo <thienvh@trobz.com>
 
 Maintainers
 -----------
@@ -144,6 +144,6 @@ OCA, or the Odoo Community Association, is a nonprofit organization whose
 mission is to support the collaborative development of Odoo features and
 promote its widespread use.
 
-This module is part of the `OCA/server-tools <https://github.com/OCA/server-tools/tree/19.0/onchange_helper>`_ project on GitHub.
+This module is part of the `OCA/server-tools__onchange_helper <https://github.com/OCA/server-tools__onchange_helper/tree/20.0/onchange_helper>`_ project on GitHub.
 
 You are welcome to contribute. To learn how please visit https://odoo-community.org/page/Contribute.
