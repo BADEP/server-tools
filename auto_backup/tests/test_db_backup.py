@@ -42,15 +42,14 @@ class TestDbBackup(common.TransactionCase):
     def mock_assets(self):
         """It provides mocked core assets"""
         self.path_join_val = "/this/is/a/path"
-        with patch(f"{model}.db") as db:
-            with patch(f"{model}.os") as os:
-                with patch(f"{model}.shutil") as shutil:
-                    os.path.join.return_value = self.path_join_val
-                    yield {
-                        "db": db,
-                        "os": os,
-                        "shutil": shutil,
-                    }
+        with patch(f"{model}.db") as db, patch(f"{model}.os") as os:
+            with patch(f"{model}.shutil") as shutil:
+                os.path.join.return_value = self.path_join_val
+                yield {
+                    "db": db,
+                    "os": os,
+                    "shutil": shutil,
+                }
 
     @contextmanager
     def patch_filtered_sftp(self, record):
@@ -148,34 +147,31 @@ class TestDbBackup(common.TransactionCase):
     def _test_action_backup_sftp_mkdirs(self):
         """It should create remote dirs"""
         rec_id = self.new_record()
-        with self.mock_assets():
-            with self.patch_filtered_sftp(rec_id):
-                with patch(f"{class_name}.cleanup", new_callable=PropertyMock):
-                    conn = rec_id.sftp_connection().__enter__()
-                    rec_id.action_backup()
-                    conn.makedirs.assert_called_once_with(rec_id.folder)
+        with self.mock_assets(), self.patch_filtered_sftp(rec_id):
+            with patch(f"{class_name}.cleanup", new_callable=PropertyMock):
+                conn = rec_id.sftp_connection().__enter__()
+                rec_id.action_backup()
+                conn.makedirs.assert_called_once_with(rec_id.folder)
 
     def _test_action_backup_sftp_mkdirs_conn_exception(self):
         """It should guard from ConnectionException on remote.mkdirs"""
         rec_id = self.new_record()
-        with self.mock_assets():
-            with self.patch_filtered_sftp(rec_id):
-                with patch(f"{class_name}.cleanup", new_callable=PropertyMock):
-                    conn = rec_id.sftp_connection().__enter__()
-                    conn.makedirs.side_effect = TestConnectionException
-                    rec_id.action_backup()
-                    # No error was raised, test pass
-                    self.assertTrue(True)
+        with self.mock_assets(), self.patch_filtered_sftp(rec_id):
+            with patch(f"{class_name}.cleanup", new_callable=PropertyMock):
+                conn = rec_id.sftp_connection().__enter__()
+                conn.makedirs.side_effect = TestConnectionException
+                rec_id.action_backup()
+                # No error was raised, test pass
+                self.assertTrue(True)
 
     def test_action_backup_sftp_remote_open(self):
         """It should open remote file w/ proper args"""
         rec_id = self.new_record()
-        with self.mock_assets() as assets:
-            with self.patch_filtered_sftp(rec_id):
-                with patch(f"{class_name}.cleanup", new_callable=PropertyMock):
-                    conn = rec_id.sftp_connection().__enter__()
-                    rec_id.action_backup()
-                    conn.open.assert_called_once_with(assets["os"].path.join(), "wb")
+        with self.mock_assets() as assets, self.patch_filtered_sftp(rec_id):
+            with patch(f"{class_name}.cleanup", new_callable=PropertyMock):
+                conn = rec_id.sftp_connection().__enter__()
+                rec_id.action_backup()
+                conn.open.assert_called_once_with(assets["os"].path.join(), "wb")
 
     def test_action_backup_all_search(self):
         """It should search all records"""
