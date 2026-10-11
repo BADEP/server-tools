@@ -11,6 +11,7 @@ class IdentifierAdapter(ISQLQuote):
     def __conform__(self, protocol):
         if protocol == ISQLQuote:
             return self
+        return None
 
     def getquoted(self):
         def is_identifier_char(c):

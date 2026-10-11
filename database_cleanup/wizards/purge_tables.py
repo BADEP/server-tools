@@ -2,6 +2,8 @@
 # Copyright 2021 Camptocamp <https://camptocamp.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 # pylint: disable=consider-merging-classes-inherited
+import typing
+
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 
@@ -15,7 +17,7 @@ class CleanupPurgeWizardTable(models.TransientModel):
     _inherit = "cleanup.purge.wizard"
     _name = "cleanup.purge.wizard.table"
     _description = "Purge tables"
-    blacklist = [
+    blacklist: typing.ClassVar[list[str]] = [
         "endpoint_route",  # web-api/endpoint_route_handler
         # \/\/ from Registry.setup_signaling() \/\/
         "orm_signaling_assets",

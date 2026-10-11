@@ -16,10 +16,10 @@ class CreateIndexesWizard(models.TransientModel):
     )
 
     def find(self):
-        res = list()
+        res = []
         for field in self.env["ir.model.fields"].search(
             [
-                ("index", "=", True),
+                ("index", "!=", False),
             ]
         ):
             if field.model not in self.env.registry:
