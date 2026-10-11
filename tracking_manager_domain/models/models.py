@@ -44,7 +44,7 @@ class Base(models.AbstractModel):
                     # if a record have been modify and then deleted
                     # it's not need to track the change so skip it
                     continue
-                for field_name, _messages in messages_by_field.items():
+                for field_name in messages_by_field:
                     field_data = all_tracking_domain_fields.get(field_name, False)
                     if field_data and not record.filtered_domain(
                         literal_eval(field_data["tracking_domain"])
@@ -58,41 +58,3 @@ class Base(models.AbstractModel):
             for record_id in record_to_remove:
                 del model_data[record_id]
         return super()._tm_post_message(data)
-
-    def _mail_track(self, tracked_fields, initial_values):
-        changes, tracking_value_ids = super()._mail_track(
-            tracked_fields, initial_values
-        )
-
-        # TODO: add properties support on domain filters
-        tracking_value_field_ids = [
-            tracking_value_id[2]["field_id"]
-            for tracking_value_id in tracking_value_ids
-            if "field_id" in tracking_value_id[2]
-        ]
-        if tracking_value_field_ids:
-            all_tracking_domain_fields = self._tm_all_tracking_domain_fields()[
-                self._name
-            ]
-
-            if all_tracking_domain_fields:
-                # remove entries that are not matching the tracking_domain of the field
-                fields_to_remove = []
-                for field_name in tracked_fields:
-                    field_data = all_tracking_domain_fields.get(field_name, False)
-                    if field_data and not self.filtered_domain(
-                        literal_eval(field_data["tracking_domain"])
-                    ):
-                        fields_to_remove.append(field_data["id"])
-                res_changes = []
-                res_tracking_value_ids = []
-                # remove values from tracking result
-                for change, tracking_value_id in zip(
-                    changes, tracking_value_ids, strict=True
-                ):
-                    if tracking_value_id[2]["field_id"] not in fields_to_remove:
-                        res_changes.append(change)
-                        res_tracking_value_ids.append(tracking_value_id)
-                changes = res_changes
-                tracking_value_ids = res_tracking_value_ids
-        return changes, tracking_value_ids
