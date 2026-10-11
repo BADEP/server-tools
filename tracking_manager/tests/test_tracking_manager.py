@@ -8,6 +8,8 @@ from odoo.tools import mute_logger
 
 
 class TestTrackingManager(TransactionCase):
+    _test_user_groups = None
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -191,7 +193,11 @@ class TestTrackingManager(TransactionCase):
             }
         )
         self.assertEqual(len(self.messages), 1)
-        self.assertEqual(self.messages.body.count("Changed"), 1)
+        # Since Odoo 20, adding a non-light group also changes the user role
+        # (light_user -> regular_user), which is tracked too.
+        self.assertEqual(self.messages.body.count("Changed"), 2)
+        self.assertIn("Groups", self.messages.body)
+        self.assertIn("Role", self.messages.body)
 
     def test_o2m_update_m2o_indirectly(self):
         user = self.partner.user_ids[0]

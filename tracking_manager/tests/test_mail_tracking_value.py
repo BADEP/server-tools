@@ -6,6 +6,8 @@ from odoo.addons.base.tests.common import BaseCommon
 
 
 class TestMailTracking(BaseCommon):
+    _test_user_groups = None
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -18,8 +20,8 @@ class TestMailTracking(BaseCommon):
         col_info = {"type": "html"}
         record = self.env["res.partner"].create({"name": "Test Partner"})
 
-        values = self.MailTracking._create_tracking_values(
-            initial_value, new_value, col_name, col_info, record
+        values = record._create_mail_tracking_values(
+            initial_value, new_value, col_name, col_info
         )
 
         self.assertEqual(values["old_value_char"], "Initial Value")
@@ -65,10 +67,19 @@ class TestMailTracking(BaseCommon):
         for p_name, col_info in test_properties_info.items():
             initial_value = values[p_name][0]
             new_value = values[p_name][1]
-            res = self.MailTracking._create_tracking_values(
-                initial_value, new_value, "name", col_info, self.partner
+            res = self.partner._create_mail_tracking_values(
+                initial_value, new_value, "name", col_info
             )
-            del res["field_id"]
+            # Odoo 20 also returns display values, not stored on mail.tracking.value
+            for key in (
+                "field_id",
+                "field_name",
+                "field_label",
+                "field_type",
+                "old_value",
+                "new_value",
+            ):
+                del res[key]
             f_name = property_type_mapped[col_info["type"]]
             expected_old_value = initial_value
             expected_new_value = new_value

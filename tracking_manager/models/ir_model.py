@@ -56,23 +56,23 @@ class IrModel(models.Model):
             }
         }
         """
-        self = self.sudo()
-        fields = self.env["ir.model.fields"].search(
+        self_sudo = self.sudo()
+        fields = self_sudo.env["ir.model.fields"].search(
             [
                 ("custom_tracking", "=", True),
                 ("model_id.active_custom_tracking", "=", True),
                 ("ttype", "=", "one2many"),
             ]
         )
-        related_models = self.env["ir.model"].search(
+        related_models = self_sudo.env["ir.model"].search(
             [
                 ("model", "in", fields.mapped("relation")),
             ]
         )
-        custom_tracked_fields = self._get_custom_tracked_fields_per_model()
+        custom_tracked_fields = self_sudo._get_custom_tracked_fields_per_model()
         res = {}
         for model in related_models:
-            if model.model not in self.env:
+            if model.model not in self_sudo.env:
                 # If the model do not exist skip it (ex: during module update)
                 continue
             if model.model in custom_tracked_fields:
@@ -82,8 +82,8 @@ class IrModel(models.Model):
                     lambda s, model=model: (
                         not s.readonly
                         and not s.related
-                        and not s.ttype == "one2many"
-                        and s.name in self.env[model.model]._fields
+                        and s.ttype != "one2many"
+                        and s.name in self_sudo.env[model.model]._fields
                     )
                 ).mapped("name")
             res[model.model] = {"fields": tracked_fields, "notify": []}
@@ -91,12 +91,15 @@ class IrModel(models.Model):
         for field in fields:
             model_name = field.model_id.model
             if (
-                model_name in self.env
-                and self.env[model_name]._fields.get(field.name)
+                model_name in self_sudo.env
+                and self_sudo.env[model_name]._fields.get(field.name)
                 and field.relation in res
             ):
                 res[field.relation]["notify"].append(
-                    [self.env[model_name]._fields[field.name].inverse_name, field.name]
+                    [
+                        self_sudo.env[model_name]._fields[field.name].inverse_name,
+                        field.name,
+                    ]
                 )
         return res
 
@@ -161,5 +164,5 @@ class IrModel(models.Model):
 
     def write(self, vals):
         if "active_custom_tracking" in vals:
-            self.env.registry.clear_cache()
+            self.env.transaction.invalidate_ormcache()
         return super().write(vals)
