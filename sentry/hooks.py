@@ -23,10 +23,7 @@ _logger = logging.getLogger(__name__)
 try:
     from odoo.addons.server_environment import serv_config
 
-    if serv_config.has_section("sentry"):
-        sentry_config = serv_config["sentry"]
-    else:
-        sentry_config = {}
+    sentry_config = serv_config["sentry"] if serv_config.has_section("sentry") else {}
 except ImportError:
     sentry_config = {}
     cfg_path = config.get("config")
@@ -89,7 +86,7 @@ def before_send(event, hint):
 def get_odoo_commit(odoo_dir):
     """Attempts to get Odoo git commit from :param:`odoo_dir`."""
     if not odoo_dir:
-        return
+        return None
     try:
         return fetch_git_sha(odoo_dir)
     except InvalidGitRepository:
@@ -103,7 +100,7 @@ def initialize_sentry(config):
     """
     enabled = config.get("sentry_enabled", False)
     if not (HAS_SENTRY_SDK and enabled):
-        return
+        return None
     _logger.info("Initializing sentry...")
     if config.get("sentry_odoo_dir") and config.get("sentry_release"):
         _logger.debug(
@@ -159,14 +156,14 @@ def initialize_sentry(config):
 
     # The server app is already registered so patch it here.
     # this is mostly a defensive fallback
-    if server and server.app is not odoo.http.root:
+    if server and server.app is not odoo.http.router.root:
         server.app = SentryWsgiMiddleware(server.app)
 
     # Patch the actual WSGI entrypoint while keeping
-    # odoo.http.Application as a class
-    # odoo.http.root as the regular root/application object
+    # odoo.http.router.Application as a class
+    # odoo.http.router.root as the regular root/application object
     if _ORIGINAL_APPLICATION_CALL is None:
-        _ORIGINAL_APPLICATION_CALL = odoo.http.Application.__call__
+        _ORIGINAL_APPLICATION_CALL = odoo.http.router.Application.__call__
 
         def sentry_application_call(self, environ, start_response):
             middleware = getattr(self, "_sentry_wsgi_middleware", None)
@@ -177,7 +174,7 @@ def initialize_sentry(config):
                 self._sentry_wsgi_middleware = middleware
             return middleware(environ, start_response)
 
-        odoo.http.Application.__call__ = sentry_application_call
+        odoo.http.router.Application.__call__ = sentry_application_call
 
     if config.get("sentry_startup_message", True) not in (False, "False", "false"):
         with sentry_sdk.new_scope() as scope:

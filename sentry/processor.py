@@ -16,11 +16,10 @@ class SanitizeKeysProcessor:
     MASK = "*" * 8
 
     def process(self, data, **kwargs):
-        if "exception" in data:
-            if "values" in data["exception"]:
-                for value in data["exception"].get("values", []):
-                    if "stacktrace" in value:
-                        self.filter_stacktrace(value["stacktrace"])
+        if "exception" in data and "values" in data["exception"]:
+            for value in data["exception"].get("values", []):
+                if "stacktrace" in value:
+                    self.filter_stacktrace(value["stacktrace"])
 
         if "request" in data:
             self.filter_http(data["request"])
@@ -39,17 +38,14 @@ class SanitizeKeysProcessor:
 
     def sanitize(self, item, value):
         if value is None:
-            return
+            return None
 
         if not item:  # key can be a NoneType
             return value
 
         # Just in case we have bytes here, we want to make them into text
         # properly without failing so we can perform our check.
-        if isinstance(item, bytes):
-            item = item.decode("utf-8", "replace")
-        else:
-            item = str(item)
+        item = item.decode("utf-8", "replace") if isinstance(item, bytes) else str(item)
 
         item = item.lower()
         for key in self.sanitize_keys:
@@ -76,10 +72,7 @@ class SanitizeKeysProcessor:
             if isinstance(data[n], string_types()) and "=" in data[n]:
                 # at this point we've assumed it's a standard HTTP query
                 # or cookie
-                if n == "cookies":
-                    delimiter = ";"
-                else:
-                    delimiter = "&"
+                delimiter = ";" if n == "cookies" else "&"
 
                 data[n] = self._sanitize_keyvals(data[n], delimiter)
             else:

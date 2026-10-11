@@ -20,14 +20,14 @@ Sentry
 .. |badge2| image:: https://img.shields.io/badge/license-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
-.. |badge3| image:: https://img.shields.io/badge/github-OCA%2Fserver--tools-lightgray.png?logo=github
-    :target: https://github.com/OCA/server-tools/tree/19.0/sentry
-    :alt: OCA/server-tools
+.. |badge3| image:: https://img.shields.io/badge/github-OCA%2Fserver--tools__sentry-lightgray.png?logo=github
+    :target: https://github.com/OCA/server-tools__sentry/tree/20.0/sentry
+    :alt: OCA/server-tools__sentry
 .. |badge4| image:: https://img.shields.io/badge/weblate-Translate%20me-F47D42.png
-    :target: https://translation.odoo-community.org/projects/server-tools-19-0/server-tools-19-0-sentry
+    :target: https://translation.odoo-community.org/projects/server-tools__sentry-20-0/server-tools__sentry-20-0-sentry
     :alt: Translate me on Weblate
 .. |badge5| image:: https://img.shields.io/badge/runboat-Try%20me-875A7B.png
-    :target: https://runboat.odoo-community.org/builds?repo=OCA/server-tools&target_branch=19.0
+    :target: https://runboat.odoo-community.org/builds?repo=OCA/server-tools__sentry&target_branch=20.0
     :alt: Try me on Runboat
 
 |badge1| |badge2| |badge3| |badge4| |badge5|
@@ -115,25 +115,25 @@ are necessary.
 Known issues / Roadmap
 ======================
 
-- **No database separation** -- This module functions by intercepting
-  all Odoo logging records in a running Odoo process. This means that
-  once installed in one database, it will intercept and report errors
-  for all Odoo databases, which are used on that Odoo server.
-- **Frontend integration** -- In the future, it would be nice to add
-  Odoo client-side error reporting to this module as well, by
-  integrating `raven-js <https://github.com/getsentry/raven-js>`__.
-  Additionally, `Sentry user feedback
-  form <https://docs.sentry.io/learn/user-feedback/>`__ could be
-  integrated into the Odoo client error dialog window to allow users
-  shortly describe what they were doing when things went wrong.
+-  **No database separation** -- This module functions by intercepting
+   all Odoo logging records in a running Odoo process. This means that
+   once installed in one database, it will intercept and report errors
+   for all Odoo databases, which are used on that Odoo server.
+-  **Frontend integration** -- In the future, it would be nice to add
+   Odoo client-side error reporting to this module as well, by
+   integrating `raven-js <https://github.com/getsentry/raven-js>`__.
+   Additionally, `Sentry user feedback
+   form <https://docs.sentry.io/learn/user-feedback/>`__ could be
+   integrated into the Odoo client error dialog window to allow users
+   shortly describe what they were doing when things went wrong.
 
 Bug Tracker
 ===========
 
-Bugs are tracked on `GitHub Issues <https://github.com/OCA/server-tools/issues>`_.
+Bugs are tracked on `GitHub Issues <https://github.com/OCA/server-tools__sentry/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/OCA/server-tools/issues/new?body=module:%20sentry%0Aversion:%2019.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/OCA/server-tools__sentry/issues/new?body=module:%20sentry%0Aversion:%2020.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -151,20 +151,20 @@ Authors
 Contributors
 ------------
 
-- Mohammed Barsi <barsintod@gmail.com>
-- Andrius Preimantas <andrius@versada.eu>
-- Naglis Jonaitis <naglis@versada.eu>
-- Atte Isopuro <atte.isopuro@avoin.systems>
-- Florian Mounier <florian.mounier@akretion.com>
-- Jon Ashton <jon@monkeyinferno.com>
-- Mark Schuit <mark@gig.solutions>
-- Atchuthan <atchuthan@sodexis.com>
-- Koert van der Veer <info@ondergetekende.nl>
+-  Mohammed Barsi <barsintod@gmail.com>
+-  Andrius Preimantas <andrius@versada.eu>
+-  Naglis Jonaitis <naglis@versada.eu>
+-  Atte Isopuro <atte.isopuro@avoin.systems>
+-  Florian Mounier <florian.mounier@akretion.com>
+-  Jon Ashton <jon@monkeyinferno.com>
+-  Mark Schuit <mark@gig.solutions>
+-  Atchuthan <atchuthan@sodexis.com>
+-  Koert van der Veer <info@ondergetekende.nl>
 
 Other credits
 -------------
 
-- Vauxoo
+-  Vauxoo
 
 Maintainers
 -----------
@@ -199,6 +199,6 @@ Current `maintainers <https://odoo-community.org/page/maintainer-role>`__:
 
 |maintainer-barsi| |maintainer-naglis| |maintainer-versada| |maintainer-moylop260| |maintainer-fernandahf| 
 
-This module is part of the `OCA/server-tools <https://github.com/OCA/server-tools/tree/19.0/sentry>`_ project on GitHub.
+This module is part of the `OCA/server-tools__sentry <https://github.com/OCA/server-tools__sentry/tree/20.0/sentry>`_ project on GitHub.
 
 You are welcome to contribute. To learn how please visit https://odoo-community.org/page/Contribute.

@@ -19,13 +19,13 @@ def split_multiple(string, delimiter=",", strip_chars=None):
 
 def to_int_if_defined(value):
     if value == "" or value is None:
-        return
+        return None
     return int(value)
 
 
 def to_float_if_defined(value):
     if value == "" or value is None:
-        return
+        return None
     return float(value)
 
 
