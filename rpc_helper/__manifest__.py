@@ -4,14 +4,14 @@
 
 {
     "name": "Disable RPC",
-    "summary": """Helpers for disabling RPC calls""",
-    "version": "19.0.1.0.0",
+    "summary": "Helpers for disabling RPC calls",
+    "version": "20.0.1.0.0",
     "development_status": "Beta",
     "license": "LGPL-3",
     "website": "https://github.com/OCA/server-tools",
     "author": "Camptocamp, Odoo Community Association (OCA)",
     "maintainers": ["simahawk"],
-    "depends": ["base_sparse_field"],
+    "depends": ["base_sparse_field", "rpc"],
     "data": ["views/ir_model_views.xml"],
     "post_load": "post_load_hook",
 }
