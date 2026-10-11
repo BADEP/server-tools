@@ -9,12 +9,11 @@ The module is a technical module providing a new field type called "Vector". It'
 To declare a field of type vector, you can use the following syntax:
 
 ```python
-
 from odoo.addons.field_vector.fields import Vector
 
 
 class YourModel(models.Model):
-    _name = 'your.model'
+    _name = "your.model"
 
     vector_field = Vector(dimensions=3)
 ```
@@ -26,8 +25,10 @@ You can override these parameters by passing them as arguments to the field:
 
 ```python
 from odoo.addons.field_vector.fields import Vector
+
+
 class YourModel(models.Model):
-    _name = 'your.model'
+    _name = "your.model"
 
     vector_field = Vector(dimensions=3, prefetch=True, autopad=False)
 ```
@@ -43,21 +44,17 @@ provides a convenient way to get the value of the vector as a numpy array.
 
 ```python
 import numpy as np
-from odoo.addons.field_vector.fields import  VectorValue
+from odoo.addons.field_vector.fields import VectorValue
 
-record = self.env['your.model'].create({
-    'vector_field': [1.0, 2.0, 3.0]
-})
+record = self.env["your.model"].create({"vector_field": [1.0, 2.0, 3.0]})
 
 assert isinstance(record.vector_field, VectorValue)
 assert isinstance(record.vector_field.value, np.ndarray)
-
 ```
 
 When setting the field, you can pass a list of values or a numpy array or a `VectorValue` object or a list/tuple of values. The field will automatically convert the value to a VectorValue and store it in the database into the vector format.
 
 ```python
-
 record.vector_field = [1.0, 2.0, 3.0]
 assert isinstance(record.vector_field, VectorValue)
 
@@ -66,7 +63,6 @@ assert isinstance(record.vector_field, VectorValue)
 
 record.vector_field = VectorValue([1.0, 2.0, 3.0])
 assert isinstance(record.vector_field, VectorValue)
-
 ```
 
 ## Plain SQL queries
@@ -75,8 +71,7 @@ When reading the field in plain SQL queries, the field will be returned as a
 `VectorValue` object. You can use the `value` property to get the value of the vector as a numpy array.
 
 ```python
-
-env.cr.execute('SELECT vector_field FROM your_model WHERE id = 1')
+env.cr.execute("SELECT vector_field FROM your_model WHERE id = 1")
 record = env.cr.fetchone()
 vector_value = record[0]
 assert isinstance(vector_value, VectorValue)
@@ -85,9 +80,14 @@ assert isinstance(vector_value, VectorValue)
 When writing the field in plain SQL queries, you can pass a numpy array or a list of values or a VectorValue object as the value of the field (in this specific case tuples are not supported).
 
 ```python
-
-env.cr.execute('UPDATE your_model SET vector_field = %s WHERE id = 1', (np.array([1.0, 2.0, 3.0]),))
-env.cr.execute('UPDATE your_model SET vector_field = %s WHERE id = 1', ([1.0, 2.0, 3.0],))
-env.cr.execute('UPDATE your_model SET vector_field = %s WHERE id = 1', (VectorValue([1.0, 2.0, 3.0]),))
-
+env.cr.execute(
+    "UPDATE your_model SET vector_field = %s WHERE id = 1", (np.array([1.0, 2.0, 3.0]),)
+)
+env.cr.execute(
+    "UPDATE your_model SET vector_field = %s WHERE id = 1", ([1.0, 2.0, 3.0],)
+)
+env.cr.execute(
+    "UPDATE your_model SET vector_field = %s WHERE id = 1",
+    (VectorValue([1.0, 2.0, 3.0]),),
+)
 ```
