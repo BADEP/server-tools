@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils: https://docutils.sourceforge.io/" />
-<title>README.rst</title>
+<meta name="generator" content="Docutilsb1.dev: https://docutils.sourceforge.io/" />
+<title>Module Auto Update</title>
 <style type="text/css">
 
 /*
 :Author: David Goodger (goodger@python.org)
-:Id: $Id: html4css1.css 9511 2024-01-13 09:50:07Z milde $
+:Id: $Id$
 :Copyright: This stylesheet has been placed in the public domain.
 
 Default cascading style sheet for the HTML output of Docutils.
@@ -374,7 +374,7 @@ ul.auto-toc {
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !! source digest: sha256:af515aac1dd690f3ff6a9e51c0f77a5fc540755a0bd146fa1c5cc10ff0773519
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-<p><a class="reference external image-reference" href="https://odoo-community.org/page/development-status"><img alt="Production/Stable" src="https://img.shields.io/badge/maturity-Production%2FStable-green.png" /></a> <a class="reference external image-reference" href="http://www.gnu.org/licenses/lgpl-3.0-standalone.html"><img alt="License: LGPL-3" src="https://img.shields.io/badge/license-LGPL--3-blue.png" /></a> <a class="reference external image-reference" href="https://github.com/OCA/server-tools/tree/19.0/module_auto_update"><img alt="OCA/server-tools" src="https://img.shields.io/badge/github-OCA%2Fserver--tools-lightgray.png?logo=github" /></a> <a class="reference external image-reference" href="https://translation.odoo-community.org/projects/server-tools-19-0/server-tools-19-0-module_auto_update"><img alt="Translate me on Weblate" src="https://img.shields.io/badge/weblate-Translate%20me-F47D42.png" /></a> <a class="reference external image-reference" href="https://runboat.odoo-community.org/builds?repo=OCA/server-tools&amp;target_branch=19.0"><img alt="Try me on Runboat" src="https://img.shields.io/badge/runboat-Try%20me-875A7B.png" /></a></p>
+<p><a class="reference external image-reference" href="https://odoo-community.org/page/development-status"><img alt="Production/Stable" src="https://img.shields.io/badge/maturity-Production%2FStable-green.png" /></a> <a class="reference external image-reference" href="http://www.gnu.org/licenses/lgpl-3.0-standalone.html"><img alt="License: LGPL-3" src="https://img.shields.io/badge/license-LGPL--3-blue.png" /></a> <a class="reference external image-reference" href="https://github.com/OCA/server-tools__module_auto_update/tree/20.0/module_auto_update"><img alt="OCA/server-tools__module_auto_update" src="https://img.shields.io/badge/github-OCA%2Fserver--tools__module_auto_update-lightgray.png?logo=github" /></a> <a class="reference external image-reference" href="https://translation.odoo-community.org/projects/server-tools__module_auto_update-20-0/server-tools__module_auto_update-20-0-module_auto_update"><img alt="Translate me on Weblate" src="https://img.shields.io/badge/weblate-Translate%20me-F47D42.png" /></a> <a class="reference external image-reference" href="https://runboat.odoo-community.org/builds?repo=OCA/server-tools__module_auto_update&amp;target_branch=20.0"><img alt="Try me on Runboat" src="https://img.shields.io/badge/runboat-Try%20me-875A7B.png" /></a></p>
 <p>This addon provides mechanisms to compute sha1 hashes of installed
 addons, and save them in the database. It also provides a method that
 exploits these mechanisms to update a database by upgrading only the
@@ -403,8 +403,9 @@ also be integrated in your non-Odoo maintenance tools instead.</p>
 <ul class="simple">
 <li><tt class="docutils literal">module_auto_update.exclude_patterns</tt>: comma-separated list of file
 name patterns to ignore when computing addon checksums. Defaults to
-<tt class="docutils literal"><span class="pre">*.pyc,*.pyo,i18n/*.pot,i18n_extra/*.pot,static/*,tests/*</span></tt>. Filename
-patterns must be compatible with the python <tt class="docutils literal">fnmatch</tt> function.</li>
+<tt class="docutils literal"><span class="pre">*.pyc,*.pyo,i18n/*.pot,i18n_extra/*.pot,static/*,tests/*</span></tt>.
+Filename patterns must be compatible with the python <tt class="docutils literal">fnmatch</tt>
+function.</li>
 </ul>
 <p>In addition to the above pattern, .po files corresponding to languages
 that are not installed in the Odoo database are ignored when computing
@@ -429,15 +430,15 @@ possible issues.</p>
 <p>Another easy way to invoke this upgrade mechanism is by issuing the
 following in an Odoo shell session:</p>
 <pre class="code python literal-block">
-<span class="n">env</span><span class="p">[</span><span class="s1">'ir.module.module'</span><span class="p">]</span><span class="o">.</span><span class="n">upgrade_changed_checksum</span><span class="p">()</span>
+<span class="n">env</span><span class="p">[</span><span class="s2">&quot;ir.module.module&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">upgrade_changed_checksum</span><span class="p">()</span>
 </pre>
 </div>
 <div class="section" id="bug-tracker">
 <h2><a class="toc-backref" href="#toc-entry-3">Bug Tracker</a></h2>
-<p>Bugs are tracked on <a class="reference external" href="https://github.com/OCA/server-tools/issues">GitHub Issues</a>.
+<p>Bugs are tracked on <a class="reference external" href="https://github.com/OCA/server-tools__module_auto_update/issues">GitHub Issues</a>.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-<a class="reference external" href="https://github.com/OCA/server-tools/issues/new?body=module:%20module_auto_update%0Aversion:%2019.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**">feedback</a>.</p>
+<a class="reference external" href="https://github.com/OCA/server-tools__module_auto_update/issues/new?body=module:%20module_auto_update%0Aversion:%2020.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**">feedback</a>.</p>
 <p>Do not contact contributors directly about support or help with technical issues.</p>
 </div>
 <div class="section" id="credits">
@@ -473,7 +474,7 @@ If you spotted it first, help us to smash it by providing a detailed and welcome
 <p>OCA, or the Odoo Community Association, is a nonprofit organization whose
 mission is to support the collaborative development of Odoo features and
 promote its widespread use.</p>
-<p>This module is part of the <a class="reference external" href="https://github.com/OCA/server-tools/tree/19.0/module_auto_update">OCA/server-tools</a> project on GitHub.</p>
+<p>This module is part of the <a class="reference external" href="https://github.com/OCA/server-tools__module_auto_update/tree/20.0/module_auto_update">OCA/server-tools__module_auto_update</a> project on GitHub.</p>
 <p>You are welcome to contribute. To learn how please visit <a class="reference external" href="https://odoo-community.org/page/Contribute">https://odoo-community.org/page/Contribute</a>.</p>
 </div>
 </div>
