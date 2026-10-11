@@ -105,7 +105,7 @@ class BaseExceptionMethod(models.AbstractModel):
         try:
             safe_eval(expr, space, mode="exec")
         except Exception as e:
-            _logger.exception(e)
+            _logger.exception("Error when evaluating exception rule %s", rule_info.name)
             raise UserError(
                 self.env._(
                     "Error when evaluating the exception.rule"
@@ -119,10 +119,11 @@ class BaseExceptionMethod(models.AbstractModel):
     def _detect_exceptions(self, rule_info):
         if rule_info.exception_type == "by_py_code":
             return self._detect_exceptions_by_py_code(rule_info)
-        elif rule_info.exception_type == "by_domain":
+        if rule_info.exception_type == "by_domain":
             return self._detect_exceptions_by_domain(rule_info)
-        elif rule_info.exception_type == "by_method":
+        if rule_info.exception_type == "by_method":
             return self._detect_exceptions_by_method(rule_info)
+        return None
 
     def _get_base_domain(self):
         return [("ignore_exception", "=", False)]

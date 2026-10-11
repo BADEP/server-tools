@@ -23,7 +23,6 @@ class BaseExceptionModel(models.AbstractModel):
     main_exception_id = fields.Many2one(
         "exception.rule",
         compute="_compute_main_error",
-        string="Main Exception",
         store=True,
     )
     exceptions_summary = fields.Html(compute="_compute_exceptions_summary")
@@ -117,3 +116,4 @@ class BaseExceptionModel(models.AbstractModel):
         if exception_ids and self.env.context.get("raise_exception", True):
             exceptions = self.env["exception.rule"].browse(exception_ids)
             raise ValidationError("\n".join(exceptions.mapped("name")))
+        return None
