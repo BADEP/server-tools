@@ -1,4 +1,3 @@
-# noqa
 from odoo.tools.convert import xml_import
 
 from .... import upgrade_log
