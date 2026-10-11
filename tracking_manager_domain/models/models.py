@@ -52,7 +52,7 @@ class Base(models.AbstractModel):
                         fields_to_remove.append(field_name)
                 for field_name in fields_to_remove:
                     del model_data[record_id][field_name]
-                if not model_data[record_id]:
+                if not messages_by_field:
                     record_to_remove.append(record_id)
 
             for record_id in record_to_remove:
