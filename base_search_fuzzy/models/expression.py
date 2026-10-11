@@ -18,8 +18,9 @@ def _optimize_trigram_similarity(condition, model):
     field_expr = condition.field_expr
     value = condition.value
 
-    def _to_sql(model_, alias, query):
-        sql_field = model_._field_to_sql(alias, field_expr, query)
+    def _to_sql(table):
+        model_ = table._model if table._model is not None else model
+        sql_field = model_._field_to_sql(table._alias, field_expr, table._query)
         return SQL("(%s) %% %s", sql_field, value)
 
     return Domain.custom(to_sql=_to_sql)

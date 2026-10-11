@@ -25,7 +25,6 @@ class TrgmIndex(models.Model):
 
     field_id = fields.Many2one(
         comodel_name="ir.model.fields",
-        string="Field",
         ondelete="set default",
         required=True,
         help='You can either select a field of type "text" or "char".',
@@ -89,12 +88,11 @@ class TrgmIndex(models.Model):
             if self._is_postgres_superuser():
                 self.env.cr.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;")
                 return True
-            else:
-                _logger.warning(
-                    "To use pg_trgm you have to create the "
-                    "extension pg_trgm in your database or you "
-                    "have to be the superuser."
-                )
+            _logger.warning(
+                "To use pg_trgm you have to create the "
+                "extension pg_trgm in your database or you "
+                "have to be the superuser."
+            )
         else:
             return True
         return False
@@ -109,10 +107,7 @@ class TrgmIndex(models.Model):
         return res
 
     def get_not_used_index(self, index_name, table_name, inc=1):
-        if inc > 1:
-            new_index_name = index_name + str(inc)
-        else:
-            new_index_name = index_name
+        new_index_name = index_name + str(inc) if inc > 1 else index_name
         self.env.cr.execute(
             """
             SELECT tablename, indexname
@@ -125,7 +120,7 @@ class TrgmIndex(models.Model):
         indexes = self.env.cr.fetchone()
         if indexes is not None and indexes[0] == table_name:
             return True, index_name
-        elif indexes is not None:
+        if indexes is not None:
             return self.get_not_used_index(index_name, table_name, inc + 1)
 
         return False, new_index_name

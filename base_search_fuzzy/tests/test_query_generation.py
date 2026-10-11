@@ -7,6 +7,8 @@ from odoo.addons.base.tests.common import BaseCommon
 
 
 class QueryGenerationCase(BaseCommon):
+    _test_user_groups = None
+
     @classmethod
     def setUpClass(self):
         super().setUpClass()
@@ -24,8 +26,8 @@ class QueryGenerationCase(BaseCommon):
         query = self.ResPartner._search(
             [("name", "%", "test")], active_test=False, bypass_access=True
         )
-        from_clause = query.from_clause.code
-        where_clause = query.where_clause.code
+        from_clause = query.from_clause._sql_tuple[0]
+        where_clause, where_params, _flush = query.where_clause._sql_tuple
 
         # the trigram operator must appear escaped as %% in the SQL template
         self.assertIn('"res_partner"."name"', where_clause)
@@ -35,7 +37,7 @@ class QueryGenerationCase(BaseCommon):
         # now there should be only one '%'
         complete_where = self.env.cr.mogrify(
             f"SELECT FROM {from_clause} WHERE {where_clause}",
-            query.where_clause.params,
+            where_params,
         )
         self.assertEqual(
             complete_where,
@@ -48,8 +50,8 @@ class QueryGenerationCase(BaseCommon):
         query = self.ResPartnerCategory.with_context(lang="en_US")._search(
             [("name", "%", "Goschaeftlic")], active_test=False, bypass_access=True
         )
-        from_clause = query.from_clause.code
-        where_clause = query.where_clause.code
+        from_clause = query.from_clause._sql_tuple[0]
+        where_clause, where_params, _flush = query.where_clause._sql_tuple
 
         # the trigram operator must appear escaped as %% in the SQL template
         self.assertIn('"res_partner_category"."name"', where_clause)
@@ -57,7 +59,7 @@ class QueryGenerationCase(BaseCommon):
 
         complete_where = self.env.cr.mogrify(
             f"SELECT FROM {from_clause} WHERE {where_clause}",
-            query.where_clause.params,
+            where_params,
         )
 
         self.assertEqual(
