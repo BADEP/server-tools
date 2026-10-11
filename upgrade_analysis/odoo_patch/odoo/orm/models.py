@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from odoo import api, models
 
 from .... import upgrade_log
@@ -6,7 +8,7 @@ from ...odoo_patch import OdooPatch
 
 class BaseModelPatch(OdooPatch):
     target = models.BaseModel
-    method_names = ["_convert_records"]
+    method_names: ClassVar[list[str]] = ["_convert_records"]
 
     @api.model
     def _convert_records(self, records, *, log=lambda a: None, savepoint):

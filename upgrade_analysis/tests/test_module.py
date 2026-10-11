@@ -1,4 +1,5 @@
 from copy import deepcopy
+from typing import ClassVar
 from unittest.mock import patch
 
 from lxml import etree
@@ -66,7 +67,7 @@ class TestUpgradeAnalysis(common.TransactionCase):
             )
         )
         with OdooPatch():
-            self.env["ir.model.constraint"]._reflect_model(self.IrModuleModule)
+            self.env["ir.model.constraint"]._reflect_table_object(self.IrModuleModule)
         self.assertTrue(
             self.env["upgrade.record"].search(
                 [
@@ -96,11 +97,11 @@ class TestUpgradeAnalysis(common.TransactionCase):
                 ),
             )
 
-        state_field = [
+        state_field = next(
             field
             for field in new_fields
             if field["field"] == "state" and field["model"] == "upgrade.analysis"
-        ][0]
+        )
 
         state_field["selection_keys"] = "['done', 'new']"
         comparison = compare.compare_sets(old_fields, new_fields)
@@ -201,7 +202,7 @@ class TestUpgradeAnalysis(common.TransactionCase):
         )
 
         class RemoteUpgradeRecord:
-            _records = {
+            _records: ClassVar[dict] = {
                 1: {
                     "name": "other_module.test_noupdate_xmlid",
                     "mode": "create",
@@ -234,7 +235,7 @@ class TestUpgradeAnalysis(common.TransactionCase):
                 return []
 
             def list_modules(self):
-                return set(record["module"] for record in self._records.values())
+                return {record["module"] for record in self._records.values()}
 
             def get_xml_records(self, module):
                 if module == "other_module":
@@ -255,6 +256,7 @@ class TestUpgradeAnalysis(common.TransactionCase):
                         </odoo>
                         """
                     ]
+                return None
 
         def local_get_xml_records(module):
             if module == "upgrade_analysis":
@@ -272,6 +274,7 @@ class TestUpgradeAnalysis(common.TransactionCase):
                     </odoo>
                     """
                 ]
+            return None
 
         written_files = {}
 
