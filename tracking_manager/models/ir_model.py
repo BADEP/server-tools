@@ -34,8 +34,9 @@ class IrModel(models.Model):
         models = self.sudo().search([("active_custom_tracking", "=", True)])
         return {
             model.model: model.field_id.filtered(
-                lambda f, model=model: f.custom_tracking
-                and self.env[model.model]._fields.get(f.name)
+                lambda f, model=model: (
+                    f.custom_tracking and self.env[model.model]._fields.get(f.name)
+                )
             ).mapped("name")
             for model in models
             if model.model in self.env
@@ -78,10 +79,12 @@ class IrModel(models.Model):
                 tracked_fields = custom_tracked_fields[model.model]
             else:
                 tracked_fields = model.field_id.filtered(
-                    lambda s, model=model: not s.readonly
-                    and not s.related
-                    and not s.ttype == "one2many"
-                    and s.name in self.env[model.model]._fields
+                    lambda s, model=model: (
+                        not s.readonly
+                        and not s.related
+                        and not s.ttype == "one2many"
+                        and s.name in self.env[model.model]._fields
+                    )
                 ).mapped("name")
             res[model.model] = {"fields": tracked_fields, "notify": []}
 
