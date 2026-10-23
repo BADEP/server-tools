@@ -11,6 +11,7 @@ from lxml import etree
 from odoo import api, models
 from odoo.exceptions import ValidationError
 from odoo.fields import Domain
+from odoo.tools.misc import SKIPPED_ELEMENT_TYPES
 
 
 def ast_dict_update(source, update):
@@ -53,24 +54,41 @@ class IrUiView(models.Model):
     _inherit = "ir.ui.view"
 
     @api.model
-    def apply_inheritance_specs(self, source, specs_tree, pre_locate=lambda s: True):
-        for specs, handled_by in self._iter_inheritance_specs(specs_tree):
-            pre_locate(specs)
-            source = handled_by(source, specs)
+    def apply_inheritance_specs(self, source, specs_tree, pre_locate=None):
+        pre_locate = pre_locate or (lambda s: True)
+        try:
+            for specs, handled_by in self._iter_inheritance_specs(specs_tree):
+                pre_locate(specs)
+                source = handled_by(source, specs)
+        except ValueError as e:
+            self._raise_view_error(str(e), specs_tree)
         return source
 
     @api.model
     def _iter_inheritance_specs(self, spec):
+        if isinstance(spec, list):
+            for child in spec:
+                for node, handler in self._iter_inheritance_specs(child):
+                    yield node, handler
+            return
+        if isinstance(spec, SKIPPED_ELEMENT_TYPES):
+            return
         if spec.tag == "data":
             for child in spec:
                 for node, handler in self._iter_inheritance_specs(child):
                     yield node, handler
             return
         if spec.get("position") == "attributes":
-            if all(not c.get("operation") for c in spec):
+            if all(
+                not c.get("operation")
+                for c in spec
+                if not isinstance(c, SKIPPED_ELEMENT_TYPES)
+            ):
                 yield spec, self._get_inheritance_handler(spec)
                 return
             for child in spec:
+                if isinstance(child, SKIPPED_ELEMENT_TYPES):
+                    continue
                 node = etree.Element(spec.tag, **spec.attrib)
                 node.insert(0, child)
                 yield node, self._get_inheritance_handler_attributes(child)
@@ -187,6 +205,7 @@ class IrUiView(models.Model):
             </field>
         """
         node = self.locate_node(source, specs)
+        self._assert_node(node, specs)
         for spec in specs:
             attr_name = spec.get("name")
             # Parse ast from both node and spec
@@ -212,12 +231,12 @@ class IrUiView(models.Model):
             </attribute>
         </$node>"""
         node = self.locate_node(source, specs)
+        self._assert_node(node, specs)
         for attribute_node in specs:
             attribute_name = attribute_node.get("name")
             old_value = node.get(attribute_name) or ""
-            node.attrib[attribute_name] = attribute_node.text.format(
-                old_value=old_value
-            )
+            text = (attribute_node.text or "").strip()
+            node.attrib[attribute_name] = text.format(old_value=old_value)
         return source
 
     @api.model
@@ -230,6 +249,7 @@ class IrUiView(models.Model):
             </attribute>
         </$node>"""
         node = self.locate_node(source, specs)
+        self._assert_node(node, specs)
         for attribute_node in specs:
             attribute_name = attribute_node.get("name")
             condition = attribute_node.get("condition")
@@ -275,3 +295,19 @@ class IrUiView(models.Model):
         domain_str = pattern.sub(r"\1", domain_str)
         pattern = re.compile(r"'([^']+)_is_a_var_to_replace'")
         return pattern.sub(r"\1", domain_str)
+
+    @api.model
+    def _assert_node(self, node, specs):
+        """Raise a ValueError detailing the failing specification if node is None"""
+        if node is None:
+            self._raise_view_error(
+                self.env._(
+                    "Element '%s' cannot be located in parent view",
+                    etree.tostring(
+                        etree.Element(
+                            specs.tag,
+                            {a: v for a, v in specs.attrib.items() if a != "position"},
+                        )
+                    ).decode("utf8"),
+                )
+            )
