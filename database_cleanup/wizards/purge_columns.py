@@ -2,7 +2,6 @@
 # Copyright 2021 Camptocamp <https://camptocamp.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 # pylint: disable=consider-merging-classes-inherited
-import typing
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError
@@ -15,7 +14,7 @@ class CleanupPurgeWizardColumn(models.TransientModel):
 
     # List of known columns in use without corresponding fields
     # Format: {table: [fields]}
-    blacklist: typing.ClassVar[dict[str, list[str]]] = {
+    blacklist = {  # noqa: RUF012
         "wkf_instance": ["uid"],  # lp:1277899
         "res_users": ["password", "password_crypt", "totp_secret"],
         "res_partner": ["signup_token"],
