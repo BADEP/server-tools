@@ -1,6 +1,5 @@
 import logging
 from threading import current_thread
-from typing import ClassVar
 
 from odoo import SUPERUSER_ID, api
 from odoo.modules.registry import Registry
@@ -13,7 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class RegistryPatch(OdooPatch):
     target = Registry
-    method_names: ClassVar[list[str]] = ["init_models"]
+    method_names = ["init_models"]  # noqa: RUF012
 
     def init_models(self, cr, model_names, context, install=True):
         if "module" in context:

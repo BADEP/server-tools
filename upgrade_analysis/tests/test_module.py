@@ -1,5 +1,4 @@
 from copy import deepcopy
-from typing import ClassVar
 from unittest.mock import patch
 
 from lxml import etree
@@ -202,7 +201,7 @@ class TestUpgradeAnalysis(common.TransactionCase):
         )
 
         class RemoteUpgradeRecord:
-            _records: ClassVar[dict] = {
+            _records = {  # noqa: RUF012
                 1: {
                     "name": "other_module.test_noupdate_xmlid",
                     "mode": "create",
