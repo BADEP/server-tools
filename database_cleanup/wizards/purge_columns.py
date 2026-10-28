@@ -2,6 +2,7 @@
 # Copyright 2021 Camptocamp <https://camptocamp.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 # pylint: disable=consider-merging-classes-inherited
+
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 
@@ -13,7 +14,7 @@ class CleanupPurgeWizardColumn(models.TransientModel):
 
     # List of known columns in use without corresponding fields
     # Format: {table: [fields]}
-    blacklist = {
+    blacklist = {  # noqa: RUF012
         "wkf_instance": ["uid"],  # lp:1277899
         "res_users": ["password", "password_crypt", "totp_secret"],
         "res_partner": ["signup_token"],
@@ -71,7 +72,7 @@ class CleanupPurgeWizardColumn(models.TransientModel):
                 model_pool
             )
 
-        for _table, model_spec in table2model.items():
+        for model_spec in table2model.values():
             for column in self.get_orphaned_columns(model_spec[1]):
                 res.append((0, 0, {"name": column, "model_id": model_spec[0]}))
         if not res:
