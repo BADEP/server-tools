@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class RegistryPatch(OdooPatch):
     target = Registry
-    method_names = ["init_models"]
+    method_names = ["init_models"]  # noqa: RUF012
 
     def init_models(self, cr, model_names, context, install=True):
         if "module" in context:

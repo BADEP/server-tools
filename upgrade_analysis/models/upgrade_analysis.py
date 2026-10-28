@@ -86,8 +86,7 @@ class UpgradeAnalysis(models.Model):
         if model == "record":
             if float(self.config_id.version) < 14.0:
                 return connection.env["openupgrade.record"]
-            else:
-                return connection.env["upgrade.record"]
+            return connection.env["upgrade.record"]
         return False
 
     def _write_file(
@@ -114,12 +113,11 @@ class UpgradeAnalysis(models.Model):
                 return f"ERROR: could not create migrations directory {full_path}:\n"
         logfile = os.path.join(full_path, filename)
         try:
-            f = open(logfile, "w")
-        except Exception:
+            with open(logfile, "w") as f:
+                _logger.debug(f"Writing analysis to {logfile}")
+                f.write(content)
+        except OSError:
             return f"ERROR: could not open file {logfile} for writing:\n"
-        _logger.debug(f"Writing analysis to {logfile}")
-        f.write(content)
-        f.close()
         return None
 
     def analyze(self):
@@ -275,14 +273,14 @@ class UpgradeAnalysis(models.Model):
             noupdate_modules = self.generate_noupdate_changes(
                 moved_xml_records, renamed_xml_records, modified_xml_records
             )
-        except Exception as e:
-            _logger.exception(f"Error generating noupdate changes: {e}")
+        except Exception:
+            _logger.exception("Error generating noupdate changes")
             general_log += "ERROR: error when generating noupdate changes: {e}\n"
         no_changes_modules = list(set(no_changes_modules) - set(noupdate_modules))
         try:
             self.generate_module_coverage_file(no_changes_modules)
         except Exception as e:
-            _logger.exception(f"Error generating module coverage file: {e}")
+            _logger.exception("Error generating module coverage file")
             general_log += f"ERROR: error when generating module coverage file: {e}\n"
 
         self.write(
@@ -306,9 +304,9 @@ class UpgradeAnalysis(models.Model):
 
     @staticmethod
     def _get_node_value(element):
-        if "eval" in element.attrib.keys():
+        if "eval" in element.attrib:
             return element.attrib["eval"]
-        if "ref" in element.attrib.keys():
+        if "ref" in element.attrib:
             return element.attrib["ref"]
         if not len(element):
             return element.text
@@ -344,10 +342,7 @@ class UpgradeAnalysis(models.Model):
             elif xml_id in remote_noupdate:
                 remote_record = remote_noupdate[xml_id]
 
-            if "." in xml_id:
-                module_xmlid = xml_id.split(".", 1)[0]
-            else:
-                module_xmlid = ""
+            module_xmlid = xml_id.split(".", 1)[0] if "." in xml_id else ""
 
             if remote_record is None and not module_xmlid:
                 continue
@@ -671,7 +666,7 @@ class UpgradeAnalysis(models.Model):
         module_width = 51
         description_width = 49
 
-        all_modules = sorted(list(set(all_remote_modules + all_local_modules)))
+        all_modules = sorted(set(all_remote_modules + all_local_modules))
         module_descriptions = {}
         for module in all_modules:
             status = ""
@@ -691,11 +686,11 @@ class UpgradeAnalysis(models.Model):
                 status = f"Renamed to {compare.apriori.renamed_modules[module]}. "
             elif module in compare.apriori.renamed_modules.values():
                 status = "Renamed from {}. ".format(
-                    [
+                    next(
                         x
                         for x in compare.apriori.renamed_modules
                         if compare.apriori.renamed_modules[x] == module
-                    ][0]
+                    )
                 )
             elif module in no_changes_modules:
                 status += "No DB layout changes. "
@@ -705,11 +700,11 @@ class UpgradeAnalysis(models.Model):
 
         rendered_text = self.env["ir.qweb"]._render(
             "upgrade_analysis.module_coverage",
-            values=dict(
-                start_version=start_version,
-                end_version=end_version,
-                module_descriptions=module_descriptions,
-            ),
+            values={
+                "start_version": start_version,
+                "end_version": end_version,
+                "module_descriptions": module_descriptions,
+            },
         )
 
         file_name = "modules{}-{}.rst".format(
@@ -718,7 +713,6 @@ class UpgradeAnalysis(models.Model):
         )
 
         file_path = os.path.join(module_coverage_file_folder, file_name)
-        f = open(file_path, "w+")
-        f.write(rendered_text)
-        f.close()
+        with open(file_path, "w+") as f:
+            f.write(rendered_text)
         return True

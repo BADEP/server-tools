@@ -128,10 +128,9 @@ def istranslate(field):
 def _get_relation(field):
     if field.type in ("many2many", "many2one", "one2many"):
         return field.comodel_name
-    elif field.type == "many2one_reference":
+    if field.type == "many2one_reference":
         return field.model_field
-    else:
-        return ""
+    return ""
 
 
 def log_model(model, local_registry):
@@ -188,7 +187,7 @@ def log_xml_id(cr, module, xml_id):
     Called from:
      - tools/convert.py:xml_import._test_xml_id()
      - odoo/models.py:BaseModel._convert_records()
-     - odoo/addons/base/models/ir_model.py:IrModelConstraint._reflect_model()
+     - odoo/addons/base/models/ir_model.py:IrModelConstraint._reflect_table_object()
 
     # Catcha's
     - The module needs to be loaded with 'init', or the calling method
@@ -227,16 +226,15 @@ def log_xml_id(cr, module, xml_id):
     if not record:
         _logger.warning("Cannot find xml_id %s", xml_id)
         return
-    else:
+    cr.execute(
+        "SELECT id FROM upgrade_record "
+        "WHERE module=%s AND model=%s AND name=%s AND type=%s",
+        (module, record[0], xml_id, "xmlid"),
+    )
+    if not cr.fetchone():
         cr.execute(
-            "SELECT id FROM upgrade_record "
-            "WHERE module=%s AND model=%s AND name=%s AND type=%s",
+            "INSERT INTO upgrade_record "
+            "(create_date, module, model, name, type) "
+            "values(NOW() AT TIME ZONE 'UTC', %s, %s, %s, %s)",
             (module, record[0], xml_id, "xmlid"),
         )
-        if not cr.fetchone():
-            cr.execute(
-                "INSERT INTO upgrade_record "
-                "(create_date, module, model, name, type) "
-                "values(NOW() AT TIME ZONE 'UTC', %s, %s, %s, %s)",
-                (module, record[0], xml_id, "xmlid"),
-            )

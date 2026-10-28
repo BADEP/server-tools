@@ -9,6 +9,7 @@
 #####################################################################
 
 import collections
+import contextlib
 import copy
 from ast import literal_eval
 
@@ -132,11 +133,11 @@ def fieldprint(old, new, field, text, reprs):
         if field == "selection_keys":
             old_selection_keys = old.get("selection_keys") or ""
             new_selection_keys = new.get("selection_keys") or ""
-            try:
+            with contextlib.suppress(
+                ValueError, TypeError, SyntaxError, MemoryError, RecursionError
+            ):
                 old_selection_keys = literal_eval(old_selection_keys)
                 new_selection_keys = literal_eval(new_selection_keys)
-            except Exception:  # pylint: disable=except-pass
-                pass
             if isinstance(old_selection_keys, tuple | list) and isinstance(
                 new_selection_keys, tuple | list
             ):
@@ -185,24 +186,15 @@ def report_generic(new, old, attrs, reprs):
                 fieldprint(old, new, "", text, reprs)
         elif attr == "isproperty":
             if old[attr] != new[attr]:
-                if new[attr]:
-                    text = "now a property"
-                else:
-                    text = "not a property anymore"
+                text = "now a property" if new[attr] else "not a property anymore"
                 fieldprint(old, new, "", text, reprs)
         elif attr == "isrelated":
             if old[attr] != new[attr]:
-                if new[attr]:
-                    text = "now related"
-                else:
-                    text = "not related anymore"
+                text = "now related" if new[attr] else "not related anymore"
                 fieldprint(old, new, "", text, reprs)
         elif attr == "translate":
             if old[attr] != new[attr]:
-                if new[attr]:
-                    text = "now translatable"
-                else:
-                    text = "not translatable anymore"
+                text = "now translatable" if new[attr] else "not translatable anymore"
                 fieldprint(old, new, "", text, reprs)
         elif attr == "table":
             if old[attr] != new[attr]:
@@ -244,9 +236,8 @@ def compare_sets(old_records, new_records):
 
     obsolete_models = []
     for model in old_models:
-        if model not in new_models:
-            if model_map(model) not in new_models:
-                obsolete_models.append(model)
+        if model not in new_models and model_map(model) not in new_models:
+            obsolete_models.append(model)
 
     non_obsolete_old_records = []
     for column in copy.copy(old_records):
@@ -423,8 +414,10 @@ def compare_sets(old_records, new_records):
         f"# Direct match: {matched_direct}",
         f"# Found in other module: {matched_other_module}",
         f"# Found with different type: {matched_other_type}",
-        "# Found in other module with different type: "
-        f"{matched_other_module_other_type}",
+        (
+            "# Found in other module with different type: "
+            f"{matched_other_module_other_type}"
+        ),
         f"# In obsolete models: {in_obsolete_models}",
         f"# Not matched: {len(old_records)}",
         f"# New columns: {len(new_records)}",
@@ -447,8 +440,7 @@ def compare_xml_sets(old_records, new_records):
             for found in found_all:
                 new_records.remove(found)
         matched_records = list(old_updated.values()) + list(new_updated.values())
-        matched_records = [y for x in matched_records for y in x]
-        return matched_records
+        return [y for x in matched_records for y in x]
 
     def match(match_fields, match_type="direct"):
         matched_records = []

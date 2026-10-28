@@ -6,7 +6,7 @@ from ...odoo_patch import OdooPatch
 
 class BaseModelPatch(OdooPatch):
     target = models.BaseModel
-    method_names = ["_convert_records"]
+    method_names = ["_convert_records"]  # noqa: RUF012
 
     @api.model
     def _convert_records(self, records, *, log=lambda a: None, savepoint):

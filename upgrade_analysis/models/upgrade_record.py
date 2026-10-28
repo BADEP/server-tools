@@ -110,7 +110,7 @@ class UpgradeRecord(models.Model):
             "_order",
         ]
 
-        template = {x: False for x in keys}
+        template = dict.fromkeys(keys, False)
         data = []
         for record in self.search([("type", "=", "field")]):
             repre = template.copy()
