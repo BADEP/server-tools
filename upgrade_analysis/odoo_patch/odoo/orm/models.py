@@ -1,4 +1,3 @@
-# noqa
 from odoo import api, models
 
 from .... import upgrade_log
