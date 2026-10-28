@@ -2,7 +2,6 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import copy
-import typing
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError
@@ -62,7 +61,7 @@ class ThrowAwayCache:
 
     # List of attributes of the transaction object that need to be set aside for
     # a (temporary) clean slate.
-    transaction_attributes: typing.ClassVar[list[str]] = [
+    transaction_attributes = [  # noqa: RUF012
         "field_data",
         "field_data_patches",
         "field_dirty",
